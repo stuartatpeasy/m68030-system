@@ -1,0 +1,72 @@
+Name     Refresh_controller;
+PartNo   00;
+Date     08/06/2015;
+Revision 01;
+Designer Stuart Wallace;
+Company  ;
+Assembly None;
+Location ;
+Device   g22v10;
+
+
+/**  Inputs  (1-11, 13) **/
+
+Pin 1        = clk;             /* Memory clock                                            */
+Pin 2        = !RAMCS;          /* Dynamic RAM chip select                                 */
+Pin 3        = !REFPEND;        /* Refresh pending                                         */
+Pin 4        = !RESET;          /* System reset                                            */
+
+/**  Outputs  (14-23) **/
+
+Pin 14 = !RAS;                  /* nRAS - common to all slots                               */
+Pin 15 = !CAS;                  /* nCAS - common to all slots                               */
+Pin 16 = !CS0;                  /* Slot 0 chip select                                       */
+Pin 17 = !CS1;                  /* Slot 1 chip select                                       */
+Pin 18 = !WE;                   /* nWE - common to all slots                                */
+Pin 19 = !RBUFEN;               /* Row address buffer enable                                */
+Pin 20 = !CBUFEN;               /* Column address buffer enable                             */
+
+
+/** Declarations and intermediate variable definitions **/
+
+Field outputs = [RAS, CAS, CS0, CS1, WE, RBUFEN, CBUFEN];
+
+$define S_IDLE 'b'0000000       /* Idle state - all outputs negated                          */
+$define S_ACC0 'b'0000010       /* Access cycle 0 - row buffers enabled                      */
+$define S_ACC1 'b'1000010       /* Access cycle 1 - row buffers enabled, RAS asserted        */
+$define S_ACC2 'b'1000001       /* Access cycle 2 - column buffers enabled, RAS asserted     */
+$define S_ACC3 'b'1100001       /* Access cycle 3 - row buffers enabled, RAS & CAS asserted  */
+$define S_REF0 'b'0111000       /* Refresh cycle 0 - CAS and both chip selects asserted      */
+$define S_REF1 'b'1111000       /* Refresh cycle 1 - CAS, RAS and both chip selects asserted */
+
+RAS.ar = RESET;
+RAS.sp = 'b'0;
+CAS.ar = RESET;
+CAS.sp = 'b'0;
+CS0.ar = RESET;
+CS0.sp = 'b'0;
+CS1.ar = RESET;
+CS1.sp = 'b'0;
+WE.ar = RESET;
+WE.sp = 'b'0;
+RBUFEN.ar = RESET;
+RBUFEN.sp = 'b'0;
+CBUFEN.ar = RESET;
+CBUFEN.sp = 'b'0;
+
+
+/** Logic equations **/
+
+SequenceD outputs {
+    present S_IDLE      if (!RAMCS & !REFPEND)        next S_IDLE;
+                        if (REFPEND)                  next S_REF0;
+                        if (RAMCS)                    next S_ACC0;
+
+    present S_REF0                                    next S_REF1;
+    present S_REF1                                    next S_IDLE;
+
+    present S_ACC0                                    next S_ACC1;
+    present S_ACC1                                    next S_ACC2;
+    present S_ACC2                                    next S_ACC3;
+    present S_ACC3                                    next S_IDLE;
+}
