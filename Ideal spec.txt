@@ -1,15 +1,16 @@
 Motherboard specification
 -------------------------
 
-MC68020 CPU
+MC68030 CPU
 MC68881/2 FPU
-Two 72-pin SIMM slots, x32 bus width, supporting up to 256MB RAM
-2MB (512kBx32) fast static RAM
+Four 72-pin SIMM slots, x32 bus width, supporting up to 256MB RAM
+[2MB (512kBx32) fast static RAM]
 512kB x8 firmware ROM
 One dual-channel ATA interface
 One RS232 serial port (MC68901 / SCC2691) supporting up to 115.2kbaud
 Programmable interrupt controller (MC68901)
-DMA controller [?]
+USB host interface
+[DMA controller [?]]
 PS/2 keyboard and mouse interface
 Real-time clock
 Buzzer

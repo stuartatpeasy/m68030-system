@@ -1,0 +1,24 @@
+min	ideal	reason
+ 2	 2	5V
+ 2	 2	3V3
+ 8	 8	GND
+32	32	data bus
+26?	32	address bus (64MB min)
+ 1	 1	nIRQ
+ 1	 1	nRESET
+ 1	 1	nHALT
+ 1	 1	CLK
+ 2	 2	SIZn
+ 2	 2	nDSACK
+ 1	 1 	nBERR
+ 1	 1	nIPEND
+ 1	 1	nAVEC
+ 1	 1	R/nW
+ 1	 1	nCS
+ 1	 1	nRMC
+ 3	 3	nBR, nBG, nBGACK
+----------------------------------------
+87	93	total
+
+
+function codes?
