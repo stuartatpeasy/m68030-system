@@ -1,0 +1,90 @@
+Name      interrupt_controller;
+PartNo    1;
+Date      2016-11-13;
+Revision  00;
+Designer  swallace;
+Company   ;
+Assembly  None;
+Location  None;
+Device    G22V10;
+
+/*
+Description
+===========
+
+PLD pin descriptions
+====================
+       nNMI                 2     [in]  Non-maskable interrupt input
+       EXP_nIRQ31           3     [in]  Expansion slot 3/1 interrupt
+       EXP_nIRQ20           4     [in]  Expansion slot 2/0 interrupt
+       ETH_nIRQ             5     [in]  Ethernet interrupt input
+       USB_nIRQ             6     [in]  USB interrupt input
+       ATA_IRQ              7     [in]  ATA interrupt input
+       SER_nIRQ             8     [in]  RS232 interrupt input
+       PS2_nIRQ             9     [in]  PS/2 interrupt input
+       RTC_nIRQ             10    [in]  Real-time clock interrupt input
+
+       nIRQ0                21    [out] IRQ0 output
+       nIRQ1                22    [out] IRQ1 output
+       nIRQ2                23    [out] IRQ2 output
+
+Notes
+=====
+
+This module must be compiled with Quine-McCluskey minimisation and de Morgan optimisation,
+or the product terms will not fit into a 22V10 GAL.
+
+
+Target device pinout
+====================
+                         22V10
+                      _____ _____
+             CLK/IN -| 1   U  24 |- VCC
+  nNMI           IN -| 2      23 |- I/O    nIRQ2
+  EXP_nIRQ31     IN -| 3      22 |- I/O    nIRQ1
+  EXP_nIRQ20  IN/PD -| 4      21 |- I/O    nIRQ0
+  ETH_nIRQ       IN -| 5      20 |- I/O    
+  USB_nIRQ       IN -| 6      19 |- I/O    
+  ATA_IRQ        IN -| 7      18 |- I/O    
+  SER_nIRQ       IN -| 8      17 |- I/O    
+  PS2_nIRQ       IN -| 9      16 |- I/O    
+  RTC_nIRQ       IN -| 10     15 |- I/O    
+                 IN -| 11     14 |- I/O    
+                GND -| 12     13 |- IN     
+                      ----------- 
+*/
+
+/** Inputs **/
+
+Pin 2  = !NMI;
+Pin 3  = !EXP_IRQ31;
+Pin 4  = !EXP_IRQ20;
+Pin 5  = !ETH_IRQ;
+Pin 6  = !USB_IRQ;
+Pin 7  = ATA_IRQ;
+Pin 8  = !SER_IRQ;
+Pin 9  = !PS2_IRQ;
+Pin 10 = !RTC_IRQ;
+
+/** Outputs **/
+
+Pin 23 = !IRQ2;
+Pin 22 = !IRQ1;
+Pin 21 = !IRQ0;
+
+/*
+	Definitions
+*/
+
+INT7 = NMI;
+INT6 = !INT7 & EXP_IRQ31;
+INT5 = !INT6 & EXP_IRQ20;
+INT4 = !INT5 & ETH_IRQ;
+INT3 = !INT4 & (USB_IRQ # ATA_IRQ);
+INT2 = !INT3 & (SER_IRQ # PS2_IRQ);
+INT1 = !INT2 & RTC_IRQ;
+INT0 = !INT1;
+
+IRQ2 = INT7 # INT6 # INT5 # INT4;
+IRQ1 = INT7 # INT6 # INT3 # INT2;
+IRQ0 = INT7 # INT5 # INT3 # INT1;
